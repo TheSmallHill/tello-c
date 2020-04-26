@@ -1,5 +1,6 @@
-#ifdef __linux__
+#include <dbus/dbus.h>
 
-#else
-#error Operating system not supported.
-#endif
+class NetworkConnect
+{
+
+}
