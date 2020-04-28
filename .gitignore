@@ -1,3 +1,11 @@
 # Eclipse artifacts
 .project
 .cproject
+
+# Build artifacts
+*.a
+*.so
+*.o
+
+# Make artifacts
+Makefile

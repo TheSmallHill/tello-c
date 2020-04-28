@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 3.13)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+include(CMakeDependentOption)
+
 project (TelloControl)
 
 # Options
 option(BUILD_STATIC_LIB "Build a static lib" ON)
 option(BUILD_SHARED_LIB "Build a shared lib" OFF)
-CMAKE_DEPENDENT_OPTION(BUILD_UNIT_TESTS "Builds unit tests for the Tello Control project" OFF "BUILD_STATIC_LIB" ON)
+cmake_dependent_option(BUILD_UNIT_TESTS "Builds unit tests for the Tello Control project" OFF "BUILD_STATIC_LIB" ON)
 
 find_package(Boost REQUIRED)
 
