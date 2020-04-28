@@ -4,17 +4,19 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 project (TelloControl)
 
+# Options
+option(BUILD_STATIC_LIB "Build a static lib" ON)
+option(BUILD_SHARED_LIB "Build a shared lib" OFF)
+CMAKE_DEPENDENT_OPTION(BUILD_UNIT_TESTS "Builds unit tests for the Tello Control project" OFF "BUILD_STATIC_LIB" ON)
+
 find_package(Boost REQUIRED)
-find_package(PkgConfig REQUIRED)
 
-pkg_check_modules(DBUS dbus-1)
-
+# Object library
 add_library(${PROJECT_NAME}ObjectLib OBJECT "")
 
 target_include_directories(${PROJECT_NAME}ObjectLib
    PUBLIC
       inc/
-      ${DBUS_INCLUDE_DIRS}
    PRIVATE
       src/
       ${Boost_INCLUDE_DIRS}
@@ -23,8 +25,21 @@ target_include_directories(${PROJECT_NAME}ObjectLib
 target_sources(${PROJECT_NAME}ObjectLib
    PUBLIC
       inc/TelloControl.h
-      inc/NetworkConnect.h
    PRIVATE
       src/TelloControl.cpp
-      src/NetworkConnect.cpp
 )
+
+# Static library
+if(BUILD_STATIC_LIB)
+   add_library(${PROJECT_NAME}StaticLib STATIC $<TARGET_OBJECTS:${PROJECT_NAME}ObjectLib>)
+endif()
+
+# Shared library
+if(BUILD_SHARED_LIB)
+   add_library(${PROJECT_NAME}SharedLib SHARED $<TARGET_OBJECTS:${PROJECT_NAME}ObjectLib>)
+endif()
+
+# Unit testing
+if(BUILD_UNIT_TESTS)
+   add_subdirectory(test)
+endif()
