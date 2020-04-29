@@ -39,7 +39,7 @@ protected:
    /// @name Static Variables
    /// @{
    static const unsigned int SENDER_PORT = 8889;
-   static const std::string REMOTE_ADDRESS = "192.168.10.1";
+   static const std::string REMOTE_ADDRESS;
    /// @}
 };
 

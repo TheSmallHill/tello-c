@@ -7,9 +7,8 @@ include(CMakeDependentOption)
 project (TelloControl)
 
 # Options
-option(BUILD_STATIC_LIB "Build a static lib" ON)
 option(BUILD_SHARED_LIB "Build a shared lib" OFF)
-cmake_dependent_option(BUILD_UNIT_TESTS "Builds unit tests for the Tello Control project" OFF "BUILD_STATIC_LIB" ON)
+option(BUILD_UNIT_TESTS "Builds unit tests for the Tello Control project" ON)
 
 find_package(Boost REQUIRED)
 
@@ -31,10 +30,8 @@ target_sources(${PROJECT_NAME}ObjectLib
       src/TelloControl.cpp
 )
 
-# Static library
-if(BUILD_STATIC_LIB)
-   add_library(${PROJECT_NAME}StaticLib STATIC $<TARGET_OBJECTS:${PROJECT_NAME}ObjectLib>)
-endif()
+# Static library (always made)
+add_library(${PROJECT_NAME}StaticLib STATIC $<TARGET_OBJECTS:${PROJECT_NAME}ObjectLib>)
 
 # Shared library
 if(BUILD_SHARED_LIB)
