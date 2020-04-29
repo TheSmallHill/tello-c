@@ -20,28 +20,37 @@ public:
    
    ~TelloControl();
    
-protected:
-   Response EnterCommandMode();
+   Response ToggleCommandMode();
    
+   Response DoTakeoff();
+   
+   Response DoLand();
+   
+protected:
+   Response GetResponse();
+
    /// @name Services
    /// @{
-   boost::asio::io_service senderService_;
+   boost::asio::io_service service_;
    /// #}
    
    /// @name Sockets
    /// @{
    boost::asio::ip::udp::socket senderSocket_;
+   boost::asio::ip::udp::socket receiverSocket_;
    /// @}
    
    /// @name Endpoints
    /// @{
    boost::asio::ip::udp::endpoint remoteEndpoint_;
+   boost::asio::ip::udp::endpoint localEndpoint_;
    /// @}
    
    /// @name Static Variables
    /// @{
    static const unsigned int SENDER_PORT = 8889;
    static const std::string REMOTE_ADDRESS;
+   static const std::string LOCAL_ADDRESS;
    /// @}
 };
 
