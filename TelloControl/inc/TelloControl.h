@@ -27,7 +27,7 @@ public:
    Response DoLand();
    
 protected:
-   Response GetResponse();
+   //Response SendCommand(const std::string& cmd);
 
    /// @name Services
    /// @{
@@ -36,21 +36,18 @@ protected:
    
    /// @name Sockets
    /// @{
-   boost::asio::ip::udp::socket senderSocket_;
-   boost::asio::ip::udp::socket receiverSocket_;
+   boost::asio::ip::udp::socket socket_;
    /// @}
    
    /// @name Endpoints
    /// @{
    boost::asio::ip::udp::endpoint remoteEndpoint_;
-   boost::asio::ip::udp::endpoint localEndpoint_;
    /// @}
    
    /// @name Static Variables
    /// @{
    static const unsigned int SENDER_PORT = 8889;
    static const std::string REMOTE_ADDRESS;
-   static const std::string LOCAL_ADDRESS;
    /// @}
 };
 
