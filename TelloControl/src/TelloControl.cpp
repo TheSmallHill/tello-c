@@ -11,6 +11,8 @@ TelloControl::TelloControl()
 {
    // Open the local socket
    senderSocket_.open(boost::asio::ip::udp::v4());
+   
+   EnterCommandMode();
 }
 
 TelloControl::~TelloControl()
@@ -21,7 +23,7 @@ TelloControl::~TelloControl()
 TelloControl::Response TelloControl::EnterCommandMode()
 {
    boost::system::error_code error;
-   auto sent = senderSocket_.send_to(boost::asio::buffer("Command"), remoteEndpoint_, 0, error);
+   auto sent = senderSocket_.send_to(boost::asio::buffer("command"), remoteEndpoint_, 0, error);
    
    std::cout << sent << std::endl;
    
