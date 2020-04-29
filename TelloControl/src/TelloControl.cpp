@@ -1,6 +1,3 @@
-#include <vector>
-#include <iostream>
-
 #include <boost/array.hpp>
 
 #include "TelloControl.h"
@@ -52,8 +49,6 @@ TelloControl::Response TelloControl::SendCommand(const std::string& cmd)
    
    std::string resp("");
    std::copy(recvBuffer.begin(), recvBuffer.begin() + len, std::back_inserter(resp));
-   
-   std::cout << resp << std::endl;
    
    return resp == "ok" ? Response::OK : Response::ERROR;
 }
