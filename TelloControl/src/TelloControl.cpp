@@ -1,5 +1,3 @@
-#include <boost/asio.hpp>
-
 #include <iostream>
 
 #include "TelloControl.h"

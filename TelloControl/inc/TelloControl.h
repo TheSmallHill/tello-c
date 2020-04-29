@@ -1,6 +1,8 @@
 #ifndef TELLO_CONTROL_H
 #define TELLO_CONTROL_H
 
+#include <boost/asio.hpp>
+
 #include <string>
 
 class TelloControl

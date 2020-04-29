@@ -3,6 +3,7 @@
 .cproject
 
 # Build artifacts
+build/
 *.a
 *.so
 *.o
