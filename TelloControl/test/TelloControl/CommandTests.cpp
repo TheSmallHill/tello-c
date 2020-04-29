@@ -13,9 +13,10 @@ BOOST_AUTO_TEST_CASE(Constructor)
    // Create instance of TelloControl
    TelloControl UUT;
    
-   std::cout << "entering" << std::endl;
-   
    UUT.ToggleCommandMode();
+   UUT.Takeoff();
+   UUT.FlyForward(50);
+   UUT.Land();
 }
 
 BOOST_AUTO_TEST_SUITE_END() // Commands

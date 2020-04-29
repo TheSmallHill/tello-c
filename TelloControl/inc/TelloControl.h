@@ -22,12 +22,14 @@ public:
    
    Response ToggleCommandMode();
    
-   Response DoTakeoff();
+   Response Takeoff();
    
-   Response DoLand();
+   Response Land();
+   
+   Response FlyForward(int x_cm);
    
 protected:
-   //Response SendCommand(const std::string& cmd);
+   Response SendCommand(const std::string& cmd);
 
    /// @name Services
    /// @{

@@ -22,25 +22,38 @@ TelloControl::~TelloControl()
 }
 
 TelloControl::Response TelloControl::ToggleCommandMode()
-{      
-   socket_.send_to(boost::asio::buffer("command"), remoteEndpoint_);
-     
-   boost::array<char, 4> recv_buf;
-   size_t len = socket_.receive(boost::asio::buffer(recv_buf));
-   
-   std::cout.write(recv_buf.data(), len);
+{    
+   return SendCommand("command");
+
 }
 
-/*
+TelloControl::Response TelloControl::Takeoff()
+{    
+   return SendCommand("takeoff");
+
+}
+
+TelloControl::Response TelloControl::Land()
+{    
+   return SendCommand("land");
+
+}
+
+TelloControl::Response TelloControl::FlyForward(int x_cm)
+{
+   return SendCommand("forward " + std::to_string(x_cm));
+}
+
 TelloControl::Response TelloControl::SendCommand(const std::string& cmd)
 {
    socket_.send_to(boost::asio::buffer(cmd), remoteEndpoint_);
-   boost::array<char, 4> recvBuffer;
+   boost::array<char, 5> recvBuffer;
    std::size_t len = socket_.receive(boost::asio::buffer(recvBuffer));
    
    std::string resp("");
    std::copy(recvBuffer.begin(), recvBuffer.begin() + len, std::back_inserter(resp));
    
+   std::cout << resp << std::endl;
+   
    return resp == "ok" ? Response::OK : Response::ERROR;
 }
-*/
