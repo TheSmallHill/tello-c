@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 find_package(GTest REQUIRED)
 
-add_executable(telloc_test)
+add_executable(telloc_test main.cpp)
 
 target_link_libraries(telloc_test
 	PUBLIC

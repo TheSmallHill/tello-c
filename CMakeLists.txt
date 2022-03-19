@@ -1,13 +1,17 @@
 cmake_minimum_required (VERSION 2.6)
 
+include(CMakeDependentOption)
+
 project(telloc)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 option(${PROJECT_NAME}_BUILD_SHARED "Set to true in order to build the shared library in addition to the static library." OFF)
-option(${PROJECT_NAME}_ENABLE_TESTS "Set to true to build and run tests as part of the library build" ON)
+cmake_dependent_option(${PROJECT_NAME}_ENABLE_TESTS "Set to true to build and run tests as part of the library build" ON "NOT ${PROJECT_NAME}_BUILD_SHARED" OFF)
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+if(${PROJECT_NAME}_BUILD_SHARED)
+	set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
 
 add_library(${PROJECT_NAME} OBJECT "")
 
