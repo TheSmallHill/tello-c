@@ -12,7 +12,10 @@ target_link_libraries(telloc_test
 
 target_include_directories(telloc_test
    PRIVATE
-      tests/
       "."
       ${GTEST_INCLUDE_DIRS}
+)
+
+target_sources(telloc_test
+   tests/ConfigTests.cpp
 )
