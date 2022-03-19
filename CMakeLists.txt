@@ -28,6 +28,8 @@ target_sources(${PROJECT_NAME}
       ${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config_internal.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config_internal.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/telloc_instance_internal.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/telloc_instance_internal.h
 )
 
 # Static library
