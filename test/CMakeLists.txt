@@ -25,3 +25,5 @@ target_sources(telloc_test
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/tests/ConfigurationApiTests.cpp
 )
+
+add_custom_command(TARGET telloc_test POST_BUILD COMMAND telloc_test) 
