@@ -4,8 +4,6 @@ find_package(GTest REQUIRED)
 
 add_executable(telloc_test)
 
-get_property(ALL_INCLUDES TARGET telloc_static PROPERTY INCLUDE_DIRECTORIES)
-
 target_link_libraries(telloc_test
 	PUBLIC
 		telloc_static
@@ -14,7 +12,7 @@ target_link_libraries(telloc_test
 
 target_include_directories(telloc_test
 	PUBLIC
-		${ALL_INCLUDES}
+		$<TARGET_PROPERTY:telloc,INCLUDE_DIRECTORIES>
 		"."
 		${GTEST_INCLUDE_DIRS}
 )
