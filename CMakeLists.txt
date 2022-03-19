@@ -23,6 +23,7 @@ target_sources(${PROJECT_NAME}
    PUBLIC
       ${CMAKE_CURRENT_SOURCE_DIR}/inc/api/telloc.h
       ${CMAKE_CURRENT_SOURCE_DIR}/inc/api/telloc_config.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/inc/api/telloc_types.h
    PRIVATE
       ${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config.cpp
