@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (telloc)
+project(telloc)
 
 option(${PROJECT_NAME}_BUILD_SHARED "Set to true in order to build the shared library in addition to the static library." OFF)
 

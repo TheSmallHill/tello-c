@@ -22,3 +22,13 @@ void SetPort(TellocConfigPtr configPtr, const unsigned int port)
 {
 	configPtr->port_ = port;
 }
+
+const char* GetIpAddress(const TellocConfigPtr configPtr)
+{
+	return configPtr->ip_.c_str();
+}
+
+unsigned int GetPort(const TellocConfigPtr configPtr)
+{
+	return configPtr->port_;
+}
