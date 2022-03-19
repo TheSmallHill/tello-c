@@ -3,6 +3,7 @@ cmake_minimum_required (VERSION 2.6)
 project(telloc)
 
 option(${PROJECT_NAME}_BUILD_SHARED "Set to true in order to build the shared library in addition to the static library." OFF)
+option(${PROJECT_NAME}_ENABLE_TESTS "Set to true to build and run tests as part of the library build" ON)
 
 add_library(${PROJECT_NAME} OBJECT "")
 
@@ -35,4 +36,8 @@ set_property(TARGET ${PROJECT_NAME}_static PROPERTY POSITION_INDEPENDENT_CODE ON
 if(${PROJECT_NAME}_BUILD_SHARED)
 	add_library(${PROJECT_NAME}_shared SHARED $<TARGET_OBJECTS:${PROJECT_NAME}>)
 	set_property(TARGET ${PROJECT_NAME}_shared PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
+
+if(${PROJECT_NAME}_ENABLE_TESTS)
+	add_subdirectory(test)
 endif()
