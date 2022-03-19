@@ -4,18 +4,22 @@ find_package(GTest REQUIRED)
 
 add_executable(telloc_test)
 
+get_property(ALL_INCLUDES TARGET telloc_static PROPERTY INCLUDE_DIRECTORIES)
+
 target_link_libraries(telloc_test
-   PRIVATE
-      telloc
-      ${GTEST_LIBRARIES}
+	PUBLIC
+		telloc_static
+		${GTEST_LIBRARIES}
 )
 
 target_include_directories(telloc_test
-   PRIVATE
-      "."
-      ${GTEST_INCLUDE_DIRS}
+	PUBLIC
+		${ALL_INCLUDES}
+		"."
+		${GTEST_INCLUDE_DIRS}
 )
 
 target_sources(telloc_test
-   tests/ConfigTests.cpp
+	PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR}/tests/ConfigTests.cpp
 )
