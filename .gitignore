@@ -10,3 +10,6 @@ build/
 
 # Make artifacts
 Makefile
+
+# Anything in a build folder
+_build

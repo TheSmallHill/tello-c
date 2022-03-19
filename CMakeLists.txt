@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 
 project (tello-c)
 
-add_library(${PROJECT_NAME}ObjectLib OBJECT "")
+add_library(${PROJECT_NAME} OBJECT "")
 
 target_include_directories(${PROJECT_NAME}
    PUBLIC
@@ -11,9 +11,10 @@ target_include_directories(${PROJECT_NAME}
       src/
 )
 
+# API sources
 target_sources(${PROJECT_NAME}
    INTERFACE
-      inc/TelloControl.h
+      inc/api/telloc.h
    PRIVATE
-      src/TelloControl.cpp
+      src/api/telloc.c
 )
