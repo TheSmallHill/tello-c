@@ -1,20 +1,17 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (TelloControl)
-
-find_package(Boost REQUIRED)
+project (tello-c)
 
 add_library(${PROJECT_NAME}ObjectLib OBJECT "")
 
-target_include_directories(${PROJECT_NAME}ObjectLib
+target_include_directories(${PROJECT_NAME}
    PUBLIC
       inc/
    PRIVATE
       src/
-      ${Boost_INCLUDE_DIRS}
 )
 
-target_sources(${PROJECT_NAME}ObjectLib
+target_sources(${PROJECT_NAME}
    INTERFACE
       inc/TelloControl.h
    PRIVATE
