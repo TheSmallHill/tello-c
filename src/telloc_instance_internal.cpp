@@ -7,7 +7,10 @@
 
 TellocInstanceInternal::TellocInstanceInternal(const TellocConfigInternal& config)
 	: config_(config)
-	, udpClientPtr_(new udp::Client(config.ip_, config.port_))
+	, udpCommandClientPtr_(new udp::Client(config.ip_, config.commandPort_))
+	, udpCommandResponseServerPtr_(new udp::Server(config.ip_, config.commandPort_))
+	, udpStateServerPtr_(new udp::Server(config.ip_, config.statePort_))
+
 {
 	// Intentionally empty
 }
@@ -25,7 +28,7 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 	if (!cmd.empty())
 	{
 		// Send the command to the Tello, save return just in case we get a bad response from Tello or we just timeout
-		const int socketReturn = udpClient_->Send(cmd);
+		const int socketReturn = udpCommandClientPtr_->Send(cmd);
 	}
 
 	return replyPtr;

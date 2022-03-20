@@ -33,8 +33,9 @@ protected:
 
 	const TellocConfigInternal config_;
 
-	std::unique_ptr<udp::Client> udpClientPtr_;
-	std::unique_ptr<udp::Server> udpStateClientPtr_;
+	std::unique_ptr<udp::Client> udpCommandClientPtr_;
+	std::unique_ptr<udp::Server> udpCommandResponseServerPtr_;
+	std::unique_ptr<udp::Server> udpStateServerPtr_;
 };
 
 #endif
