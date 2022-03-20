@@ -1,4 +1,5 @@
 #include "api/telloc.h"
+#include "api/telloc_types.h"
 
 #include "api/telloc_config_internal.h"
 #include "telloc_instance_internal.h"
@@ -16,11 +17,23 @@ void DestroyTellocInstance(TellocInstancePtr* tellocInstancePtr)
 
 void FreeTellocResponse(TellocResponsePtr responsePtr)
 {
+	// Delete anything within the response that was dynamically allocated
+	switch (responsePtr->type)
+	{
+	case 2:
+	case 3:
+	case 4:
+		delete[] responsePtr->str;
+		responsePtr->str = nullptr;
+		responsePtr->len = 0;
+		break;
+	}
+
 	delete responsePtr;
+	responsePtr = nullptr;
 }
 
-TellocResponsePtr TellocCommand(TellocInstancePtr, const char* format, ...)
+TellocResponsePtr TellocCommand(TellocInstancePtr tellocInstancePtr, const char* cmd)
 {
-	// Return a null pointer for now
-	return nullptr;
+	return tellocInstancePtr->ExecuteCommand(cmd);
 }
