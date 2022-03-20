@@ -41,18 +41,62 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 
 		if (rcvStatus)
 		{
+			// There is enough to return so figure it out and setup the reply message
+			replyPtr = new TellocResponse();
+
 			// Actually got a response so handle it
 			if (responseMsg.find(OK_RESPONSE_STRING_) != std::string::npos)
 			{
+				const std::list<std::string> iterableResponse = SeparateStatusFromResponse(responseMsg);
+				if (iterableResponse.size() == 1)
+				{
+					// Only one element means its just an ack
+					replyPtr->type = static_cast<int>(ResponseType::OK);
+				}
+				else if (iterableResponse.size() == 2)
+				{
+					// 2 elements means its an ack and a value (like from the basic get commands)
+					replyPtr->type = static_cast<int>(ResponseType::OK_FLOAT_VALUE);
+					replyPtr->fval = std::stof(iterableResponse.back());
+				}
+				else
+				{
+					replyPtr->type = static_cast<int>(ResponseType::TELLO_ERROR);
+					const char* str = "Unrecognized response from Tello";
 
+					const std::size_t stringLength = strlen(str);
+					replyPtr->str = new char[stringLength];
+					std::strcpy(replyPtr->str, str);
+					replyPtr->len = stringLength;
+				}
 			}
-			else if (responseMsg.find(ERROR_RESPONSE_STRING_) != std::string::npose)
+			else if (responseMsg.find(ERROR_RESPONSE_STRING_) != std::string::npos)
 			{
+				const std::list<std::string> iterableResponse = SeparateStatusFromResponse(responseMsg);
+				if (iterableResponse.size() == 1)
+				{
+					replyPtr->type = static_cast<int>(ResponseType::TELLO_ERROR);
+				}
+				else
+				{ // Tello SDK says nothing about what error return codes could be so just treat them as unrecognized
+					replyPtr->type = static_cast<int>(ResponseType::TELLO_ERROR);
+					const char* str = "Unrecognized error response from Tello";
 
+					const std::size_t stringLength = strlen(str);
+					replyPtr->str = new char[stringLength];
+					std::strcpy(replyPtr->str, str);
+					replyPtr->len = stringLength;
+				}
 			}
 			else
 			{
+				// Too complex for this interface, assuming that client requested something with a complex response, so just return
+				// the response "in the raw".
+				replyPtr->type = static_cast<int>(ResponseType::OK_STRING_VALUE);
 
+				replyPtr->str = new char[responseMsg.length()];
+				std::strcpy(replyPtr->str, responseMsg.c_str());
+				replyPtr->len = responseMsg.length();
 			}
 		}
 		else
@@ -178,4 +222,24 @@ char* TellocInstanceInternal::CreateSocketErrorMessage()
 	}
 
 	return errorMessage;
+}
+
+std::list<std::string> TellocInstanceInternal::SeparateStatusFromResponse(const std::string& msg) const
+{
+	std::list<std::string> separatedReturnStrings;
+
+	char* msgCpyOriginal = new char[msg.length()];
+	char* mspCpyMvg = std::strcpy(msgCpyOriginal, msg.c_str());
+
+	char* token = std::strtok(mspCpyMvg, " ");
+	while(token != NULL)
+	{
+		separatedReturnStrings.push_back(std::string(token, strlen(token)));
+		token = std::strtok(NULL, " ");
+	}
+
+	delete msgCpyOriginal;
+	msgCpyOriginal = nullptr;
+
+	return separatedReturnStrings;
 }

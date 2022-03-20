@@ -4,6 +4,8 @@
 #include "api/telloc_config_internal.h"
 
 #include <memory>
+#include <list>
+#include <string>
 
 namespace udp
 {
@@ -27,11 +29,14 @@ protected:
 	{
 		OK = 0,
 		OK_FLOAT_VALUE = 1,
-		TELLO_ERROR = 2,
-		TELLOC_ERROR = 3
+		OK_STRING_VALUE = 2,
+		TELLO_ERROR = 3,
+		TELLOC_ERROR = 4
 	};
 
 	char* CreateSocketErrorMessage();
+
+	std::list<std::string> SeparateStatusFromResponse(const std::string& msg) const;
 
 	const TellocConfigInternal config_;
 
