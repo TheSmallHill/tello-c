@@ -1,3 +1,5 @@
+#include "api/telloc_types.h"
+
 #include "telloc_instance_internal.h"
 
 #include "udp/client.h"
@@ -13,3 +15,5 @@ TellocInstanceInternal::~TellocInstanceInternal()
 {
 	// Intentionally empty, everything using shared memory making for easy cleanup.
 }
+
+TellocResponse* ExecuteCommand(const std::string& cmd);

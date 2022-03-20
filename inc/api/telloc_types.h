@@ -7,10 +7,6 @@
 extern "C" {
 #endif
 
-#define OK = 0x00;
-#define OK_FLOAT_VALUE = 0x01;
-#define ERROR = 0x02;
-
 struct TellocResponse
 {
 	int type;

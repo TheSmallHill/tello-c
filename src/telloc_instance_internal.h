@@ -10,13 +10,25 @@ namespace udp
 class Client;
 }
 
+struct TellocResponse;
+
 struct TellocInstanceInternal
 {
 	TellocInstanceInternal(const TellocConfigInternal& config);
 
 	virtual ~TellocInstanceInternal();
 
+	TellocResponse* ExecuteCommand(const std::string& cmd);
+
 protected:
+	enum class ReturnType
+		: int
+	{
+		OK = 0,
+		OK_FLOAT_VALUE = 1,
+		ERROR = 2
+	};
+
 	const TellocConfigInternal config_;
 
 	std::unique_ptr<udp::Client> udpClient_;
