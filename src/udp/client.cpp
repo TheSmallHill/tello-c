@@ -13,7 +13,7 @@ Client::Client(const std::string& address, const int port)
 	, addressInfoPtr_(nullptr)
 {
 	char decimalPort[16];
-	snprintf(decimalPort, sizeof(decimalPort), "%d", port);
+	snprintf(decimalPort, sizeof(decimalPort), "%d", port_);
 	decimalPort[sizeof(decimalPort)/sizeof(decimalPort[0]) - 1] = '\0';
 
 	struct addrinfo hints;
@@ -25,7 +25,7 @@ Client::Client(const std::string& address, const int port)
 	int r(getaddrinfo(address.c_str(), decimalPort, &hints, &addressInfoPtr_));
 	if ((r != 0) || (addressInfoPtr_ == nullptr))
 	{
-		// Throw exception
+		/// @todo throw an exception
 	}
 
 	// Create socket and check result
@@ -34,7 +34,7 @@ Client::Client(const std::string& address, const int port)
 	{
 		freeaddrinfo(addressInfoPtr_);
 
-		// Throw exception
+		/// @todo throw an exception
 	}
 }
 

@@ -10,11 +10,15 @@ struct TellocConfigInternal
 	virtual ~TellocConfigInternal();
 
 	std::string ip_;
-	unsigned int port_;
+	unsigned int commandPort_;
+	unsigned int statePort_;
+	unsigned int commandResponseTimeout_ms_;
 
 protected:
 	static const char* DEFAULT_IP_;
-	static const unsigned int DEFAULT_PORT_;
+	static const unsigned int DEFAULT_COMMAND_PORT_;
+	static const unsigned int DEFAULT_STATE_PORT_;
+	static const unsigned int DEFAULT_COMMAND_RESPONSE_TIMEOUT_MS_;
 };
 
 #endif
