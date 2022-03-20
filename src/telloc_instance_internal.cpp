@@ -15,14 +15,19 @@ TellocInstanceInternal::TellocInstanceInternal(const TellocConfigInternal& confi
 	, udpCommandClientPtr_(new udp::Client(config.ip_, config.commandPort_))
 	, udpCommandResponseServerPtr_(new udp::Server(config.ip_, config.commandPort_))
 	, udpStateServerPtr_(new udp::Server(config.ip_, config.statePort_))
-
+	, stopStateListener_(false)
+	, stateUpdateThreadPtr_(nullptr)
 {
-	// Intentionally empty
+	// Start the thread that monitors state
+	if (udpStateServerPtr_)
+	{
+
+	}
 }
 
 TellocInstanceInternal::~TellocInstanceInternal()
 {
-	// Intentionally empty, everything using shared memory making for easy cleanup.
+	stopStateListener_.store(true);
 }
 
 TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
@@ -110,6 +115,12 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 	}
 
 	return replyPtr;
+}
+
+TelloStateType TellocInstanceInternal::GetCurrentState() const
+{
+	std::lock_guard<std::mutex> lg(stateUpdateMtx_);
+	return currentState_;
 }
 
 char* TellocInstanceInternal::CreateSocketErrorMessage()
@@ -242,4 +253,34 @@ std::list<std::string> TellocInstanceInternal::SeparateStatusFromResponse(const 
 	msgCpyOriginal = nullptr;
 
 	return separatedReturnStrings;
+}
+
+void TellocInstanceInternal::StateHandlerFcn()
+{
+	while (!stopStateListener_.load())
+	{
+		// Get mutex lock
+		udpStateServerMtx_.lock();
+
+		std::string msg;
+		if (!udpStateServerPtr_->ReceiveNonBlocking(config_.stateTimeout_ms_, msg))
+		{
+			// Something bad is going on with the state, shut down the thread and throw an exception
+			stopStateListener_.store(true);
+			/// @todo throw an exception
+		}
+
+		TelloStateType newState = GetState(msg);
+		UpdateState(newState);
+	}
+}
+
+TelloStateType TellocInstanceInternal::GetState(const std::string& msg) const
+{
+
+}
+
+void TellocInstanceInternal::UpdateState(const TelloStateType& newState)
+{
+
 }

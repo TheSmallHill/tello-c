@@ -6,6 +6,9 @@
 #include <memory>
 #include <list>
 #include <string>
+#include <thread>
+#include <mutex>
+#include <atomic>
 
 namespace udp
 {
@@ -23,6 +26,8 @@ struct TellocInstanceInternal
 
 	TellocResponse* ExecuteCommand(const std::string& cmd);
 
+	TelloStateType GetCurrentState() const;
+
 protected:
 	enum class ResponseType
 		: int
@@ -38,11 +43,25 @@ protected:
 
 	std::list<std::string> SeparateStatusFromResponse(const std::string& msg) const;
 
+	void StateHandlerFcn();
+
+	TelloStateType GetState(const std::string& msg) const;
+
+	void UpdateState(const TelloStateType& newState);
+
 	const TellocConfigInternal config_;
 
 	std::unique_ptr<udp::Client> udpCommandClientPtr_;
 	std::unique_ptr<udp::Server> udpCommandResponseServerPtr_;
+
 	std::unique_ptr<udp::Server> udpStateServerPtr_;
+	std::mutex udpStateServerMtx_;
+	std::atomic<bool> stopStateListener_;
+
+	std::unique_ptr<std::thread> stateUpdateThreadPtr_;
+
+	TelloStateType currentState_;
+	mutable std::mutex stateUpdateMtx_;
 
 	static const char* OK_RESPONSE_STRING_;
 	static const char* ERROR_RESPONSE_STRING_;
