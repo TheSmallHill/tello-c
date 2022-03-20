@@ -29,6 +29,8 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 	{
 		// Send the command to the Tello, save return just in case we get a bad response from Tello or we just timeout
 		const int socketReturn = udpCommandClientPtr_->Send(cmd);
+
+		// Immediately start waiting for a response
 	}
 
 	return replyPtr;

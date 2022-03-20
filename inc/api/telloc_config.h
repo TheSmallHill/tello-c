@@ -22,6 +22,8 @@ void SetCommandPort(TellocConfigPtr configPtr, const unsigned int port);
 
 void SetStatePort(TellocConfigPtr configPtr, const unsigned int port);
 
+void SetCommandResponseTimeout(TellocConfigPtr configPtr, const unsigned int timeout_ms);
+
 /// @}
 
 /// @name Getters
@@ -32,6 +34,8 @@ const char* GetIpAddress(const TellocConfigPtr configPtr);
 unsigned int GetCommandPort(const TellocConfigPtr configPtr);
 
 unsigned int GetStatePort(const TellocConfigPtr configPtr);
+
+unsigned int GetCommandResponseTimeout(const TellocConfigPtr configPtr);
 
 /// @}
 
