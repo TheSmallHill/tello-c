@@ -18,7 +18,9 @@ void DestroyTellocConfigInstance(TellocConfigPtr* configPtr);
 
 void SetIpAddress(TellocConfigPtr configPtr, const char* ip);
 
-void SetPort(TellocConfigPtr configPtr, const unsigned int port);
+void SetCommandPort(TellocConfigPtr configPtr, const unsigned int port);
+
+void SetStatePort(TellocConfigPtr configPtr, const unsigned int port);
 
 /// @}
 
@@ -27,7 +29,9 @@ void SetPort(TellocConfigPtr configPtr, const unsigned int port);
 
 const char* GetIpAddress(const TellocConfigPtr configPtr);
 
-unsigned int GetPort(const TellocConfigPtr configPtr);
+unsigned int GetCommandPort(const TellocConfigPtr configPtr);
+
+unsigned int GetStatePort(const TellocConfigPtr configPtr);
 
 /// @}
 

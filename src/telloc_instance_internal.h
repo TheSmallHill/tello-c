@@ -8,6 +8,7 @@
 namespace udp
 {
 class Client;
+class Server;
 }
 
 struct TellocResponse;
@@ -32,7 +33,8 @@ protected:
 
 	const TellocConfigInternal config_;
 
-	std::unique_ptr<udp::Client> udpClient_;
+	std::unique_ptr<udp::Client> udpClientPtr_;
+	std::unique_ptr<udp::Server> udpStateClientPtr_;
 };
 
 #endif

@@ -3,10 +3,11 @@
 #include "telloc_instance_internal.h"
 
 #include "udp/client.h"
+#include "udp/server.h"
 
 TellocInstanceInternal::TellocInstanceInternal(const TellocConfigInternal& config)
 	: config_(config)
-	, udpClient_(new udp::Client(config.ip_, config.port_))
+	, udpClientPtr_(new udp::Client(config.ip_, config.port_))
 {
 	// Intentionally empty
 }
