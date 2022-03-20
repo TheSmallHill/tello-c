@@ -22,7 +22,7 @@ struct TellocInstanceInternal
 	TellocResponse* ExecuteCommand(const std::string& cmd);
 
 protected:
-	enum class ReturnType
+	enum class ResponseType
 		: int
 	{
 		OK = 0,
@@ -30,6 +30,8 @@ protected:
 		TELLO_ERROR = 2,
 		TELLOC_ERROR = 3
 	};
+
+	char* CreateSocketErrorMessage();
 
 	const TellocConfigInternal config_;
 

@@ -50,5 +50,5 @@ unsigned int GetStatePort(const TellocConfigPtr configPtr)
 
 unsigned int GetCommandResponseTimeout(TellocConfigPtr configPtr)
 {
-return configPtr->commandResponseTimeout_ms_;
+	return configPtr->commandResponseTimeout_ms_;
 }
