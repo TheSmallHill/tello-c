@@ -15,7 +15,7 @@ void DestroyTellocInstance(TellocInstancePtr* tellocInstancePtr)
 	*tellocInstancePtr = nullptr;
 }
 
-void FreeTellocResponse(TellocResponsePtr responsePtr)
+void FreeTellocResponse(TellocResponseTypePtr responsePtr)
 {
 	// Delete anything within the response that was dynamically allocated
 	switch (responsePtr->type)
@@ -33,7 +33,7 @@ void FreeTellocResponse(TellocResponsePtr responsePtr)
 	responsePtr = nullptr;
 }
 
-TellocResponsePtr TellocCommand(TellocInstancePtr tellocInstancePtr, const char* cmd)
+TellocResponseTypePtr TellocCommand(TellocInstancePtr tellocInstancePtr, const char* cmd)
 {
 	return tellocInstancePtr->ExecuteCommand(cmd);
 }
