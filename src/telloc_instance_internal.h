@@ -38,6 +38,9 @@ protected:
 	std::unique_ptr<udp::Client> udpCommandClientPtr_;
 	std::unique_ptr<udp::Server> udpCommandResponseServerPtr_;
 	std::unique_ptr<udp::Server> udpStateServerPtr_;
+
+	static const char* OK_RESPONSE_STRING_;
+	static const char* ERROR_RESPONSE_STRING_;
 };
 
 #endif

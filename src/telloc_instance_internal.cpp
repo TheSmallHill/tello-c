@@ -7,6 +7,9 @@
 
 #include <cstring>
 
+const char* OK_RESPONSE_STRING_ = "OK";
+const char* ERROR_RESPONSE_STRING_ = "ERROR";
+
 TellocInstanceInternal::TellocInstanceInternal(const TellocConfigInternal& config)
 	: config_(config)
 	, udpCommandClientPtr_(new udp::Client(config.ip_, config.commandPort_))
@@ -39,6 +42,18 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 		if (rcvStatus)
 		{
 			// Actually got a response so handle it
+			if (responseMsg.find(OK_RESPONSE_STRING_) != std::string::npos)
+			{
+
+			}
+			else if (responseMsg.find(ERROR_RESPONSE_STRING_) != std::string::npose)
+			{
+
+			}
+			else
+			{
+
+			}
 		}
 		else
 		{
