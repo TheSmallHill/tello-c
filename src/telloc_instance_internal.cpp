@@ -16,4 +16,16 @@ TellocInstanceInternal::~TellocInstanceInternal()
 	// Intentionally empty, everything using shared memory making for easy cleanup.
 }
 
-TellocResponse* ExecuteCommand(const std::string& cmd);
+TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
+{
+	TellocResponse* replyPtr = nullptr;
+
+	// Need a non empty command in order to do anything
+	if (!cmd.empty())
+	{
+		// Send the command to the Tello, save return just in case we get a bad response from Tello or we just timeout
+		const int socketReturn = udpClient_->Send(cmd);
+	}
+
+	return replyPtr;
+}

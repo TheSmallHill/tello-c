@@ -12,27 +12,29 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_library(${PROJECT_NAME} OBJECT "")
 
 target_include_directories(${PROJECT_NAME}
-   PUBLIC
-      inc/
-   PRIVATE
-      src/
+	PUBLIC
+		inc/
+	PRIVATE
+		src/
 )
 
-# API sources
+# Sources
 target_sources(${PROJECT_NAME}
-   PUBLIC
-      ${CMAKE_CURRENT_SOURCE_DIR}/inc/api/telloc.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/inc/api/telloc_config.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/inc/api/telloc_types.h
-   PRIVATE
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config_internal.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config_internal.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/telloc_instance_internal.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/telloc_instance_internal.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/udp/client.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/udp/client.h
+	PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR}/inc/api/telloc.h
+		${CMAKE_CURRENT_SOURCE_DIR}/inc/api/telloc_config.h
+		${CMAKE_CURRENT_SOURCE_DIR}/inc/api/telloc_types.h
+	PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config_internal.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/api/telloc_config_internal.h
+		${CMAKE_CURRENT_SOURCE_DIR}/src/telloc_instance_internal.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/telloc_instance_internal.h
+		${CMAKE_CURRENT_SOURCE_DIR}/src/udp/client.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/udp/client.h
+		${CMAKE_CURRENT_SOURCE_DIR}/src/udp/client.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/udp/client.h
 )
 
 # Static library

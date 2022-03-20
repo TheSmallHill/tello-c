@@ -26,7 +26,8 @@ protected:
 	{
 		OK = 0,
 		OK_FLOAT_VALUE = 1,
-		ERROR = 2
+		TELLO_ERROR = 2,
+		TELLOC_ERROR = 3
 	};
 
 	const TellocConfigInternal config_;
