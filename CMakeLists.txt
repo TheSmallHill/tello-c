@@ -6,7 +6,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 option(${PROJECT_NAME}_ENABLE_TESTS "Set to true to build and run tests as part of the library build" ON)
 
-# Just always building with PIC
+# Just always building with PIC and C++11
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_library(${PROJECT_NAME} OBJECT "")

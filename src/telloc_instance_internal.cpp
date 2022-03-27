@@ -33,6 +33,12 @@ TellocInstanceInternal::~TellocInstanceInternal()
 	stopStateListener_.store(true);
 }
 
+TelloStateType TellocInstanceInternal::GetCurrentState() const
+{
+	std::lock_guard<std::mutex> lg(stateMtx_);
+	return currentState_;
+}
+
 TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 {
 	TellocResponse* replyPtr = nullptr;
@@ -55,17 +61,19 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 			// Actually got a response so handle it
 			if (responseMsg.find(OK_RESPONSE_STRING_) != std::string::npos)
 			{
-				const std::list<std::string> iterableResponse = SeparateStatusFromResponse(responseMsg);
-				if (iterableResponse.size() == 1)
+				std::vector<std::string> response;
+				SeparateStringByDelimiter(responseMsg, " ", response);
+
+				if (response.size() == 1)
 				{
 					// Only one element means its just an ack
 					replyPtr->type = static_cast<int>(ResponseType::OK);
 				}
-				else if (iterableResponse.size() == 2)
+				else if (response.size() == 2)
 				{
 					// 2 elements means its an ack and a value (like from the basic get commands)
 					replyPtr->type = static_cast<int>(ResponseType::OK_FLOAT_VALUE);
-					replyPtr->fval = std::stof(iterableResponse.back());
+					replyPtr->fval = std::stof(response.back());
 				}
 				else
 				{
@@ -80,8 +88,10 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 			}
 			else if (responseMsg.find(ERROR_RESPONSE_STRING_) != std::string::npos)
 			{
-				const std::list<std::string> iterableResponse = SeparateStatusFromResponse(responseMsg);
-				if (iterableResponse.size() == 1)
+				std::vector<std::string> response;
+				SeparateStringByDelimiter(responseMsg, " ", response);
+
+				if (response.size() == 1)
 				{
 					replyPtr->type = static_cast<int>(ResponseType::TELLO_ERROR);
 				}
@@ -118,12 +128,6 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 	}
 
 	return replyPtr;
-}
-
-TelloStateType TellocInstanceInternal::GetCurrentState() const
-{
-	std::lock_guard<std::mutex> lg(stateMtx_);
-	return currentState_;
 }
 
 char* TellocInstanceInternal::CreateSocketErrorMessage()
@@ -236,26 +240,6 @@ char* TellocInstanceInternal::CreateSocketErrorMessage()
 	}
 
 	return errorMessage;
-}
-
-std::list<std::string> TellocInstanceInternal::SeparateStatusFromResponse(const std::string& msg) const
-{
-	std::list<std::string> separatedReturnStrings;
-
-	char* msgCpyOriginal = new char[msg.length()];
-	char* mspCpyMvg = std::strcpy(msgCpyOriginal, msg.c_str());
-
-	char* token = std::strtok(mspCpyMvg, " ");
-	while(token != NULL)
-	{
-		separatedReturnStrings.push_back(std::string(token, strlen(token)));
-		token = std::strtok(NULL, " ");
-	}
-
-	delete msgCpyOriginal;
-	msgCpyOriginal = nullptr;
-
-	return separatedReturnStrings;
 }
 
 void TellocInstanceInternal::StateHandlerFcn()

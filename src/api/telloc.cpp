@@ -32,8 +32,3 @@ void FreeTellocResponse(TellocResponseTypePtr responsePtr)
 	delete responsePtr;
 	responsePtr = nullptr;
 }
-
-TellocResponseTypePtr TellocCommand(TellocInstancePtr tellocInstancePtr, const char* cmd)
-{
-	return tellocInstancePtr->ExecuteCommand(cmd);
-}
