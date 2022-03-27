@@ -20,12 +20,55 @@ TellocInstanceInternal::TellocInstanceInternal(const TellocConfigInternal& confi
 	, udpStateServerPtr_(new udp::Server(config.ip_, config.statePort_))
 	, stopStateListener_(false)
 	, stateUpdateThreadPtr_(nullptr)
+	, isVideoStreamEnabled_(false)
 {
 	// Start the thread that monitors state
 	if (udpStateServerPtr_)
 	{
 		stateUpdateThreadPtr_ = std::unique_ptr<std::thread>(new std::thread(std::bind(&TellocInstanceInternal::StateHandlerFcn, this)));
 	}
+
+	// Enter SDK mode
+	TellocResponse* replyPtr = ExecuteCommand("Command");
+
+	if (!replyPtr)
+	{
+		/// @todo throw exception
+	}
+
+	if (replyPtr->type == static_cast<int>(ResponseType::OK))
+	{
+		delete replyPtr;
+		replyPtr = nullptr;
+	}
+	else if ((replyPtr->type == static_cast<int>(ResponseType::TELLOC_ERROR)) || (replyPtr->type == static_cast<int>(ResponseType::TELLO_ERROR)))
+	{
+		const std::string errorString(replyPtr->str, replyPtr->len);
+
+		delete replyPtr;
+		replyPtr = nullptr;
+
+		/// @todo throw exception
+	}
+	else
+	{
+		delete replyPtr;
+		replyPtr = nullptr;
+
+		/// @todo throw exception that we got some unrecognized response
+	}
+
+	// Now in command mode, initialize some values in the state (basically just the position)
+	stateMtx_.lock();
+
+	// These are the responsibility of the interface.
+	currentState_.x_cm = 0;
+	currentState_.y_cm = 0;
+	currentState_.z_cm = 0;
+
+	currentState_.missionPad = -1; // Start off with mission pad disabled
+
+	stateMtx_.unlock();
 }
 
 TellocInstanceInternal::~TellocInstanceInternal()
@@ -37,6 +80,98 @@ TelloStateType TellocInstanceInternal::GetCurrentState() const
 {
 	std::lock_guard<std::mutex> lg(stateMtx_);
 	return currentState_;
+}
+
+bool TellocInstanceInternal::GetVideoStreamStatus() const
+{
+	return isVideoStreamEnabled_;
+}
+
+TellocResponse* TellocInstanceInternal::CommandTakeoff()
+{
+	TellocResponse* responsePtr = ExecuteCommand("takeoff");
+
+	// If the response is good, we need to update position
+	if (responsePtr && (responsePtr->type == static_cast<int>(ResponseType::OK)))
+	{
+		std::lock_guard<std::mutex> lg(stateMtx_);
+
+		currentState_.z_cm = currentState_.height_cm;
+	}
+
+	return responsePtr;
+}
+
+TellocResponse* TellocInstanceInternal::CommandLand()
+{
+	std::lock_guard<std::mutex> lg(stateMtx_);
+
+	const unsigned int preLandingHeight_cm = currentState_.height_cm;
+
+	TellocResponse* responsePtr = ExecuteCommand("land");
+
+	// If the response is good, we need to update position
+	if (responsePtr && (responsePtr->type == static_cast<int>(ResponseType::OK)))
+	{
+		currentState_.z_cm -= preLandingHeight_cm;
+	}
+
+	return responsePtr;
+}
+
+TellocResponse* TellocInstanceInternal::CommandEnableVideoStream()
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandDisableVideoStream()
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandEmergency()
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandUp(const unsigned int up_cm)
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandDown(const unsigned int down_cm)
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandLeft(const unsigned int left_cm)
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandRight(const unsigned int right_cm)
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandForward(const unsigned int forward_cm)
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandBackward(const unsigned int backward_cm)
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandRotateCW(const unsigned int cw_rad)
+{
+
+}
+
+TellocResponse* TellocInstanceInternal::CommandRotateCCW(const unsigned int ccw_rad)
+{
+
 }
 
 TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
