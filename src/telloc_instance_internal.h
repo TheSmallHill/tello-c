@@ -4,12 +4,15 @@
 #include "api/telloc_config_internal.h"
 
 #include <memory>
+
 #include <list>
 #include <string>
+#include <vector>
+
 #include <thread>
 #include <mutex>
 #include <atomic>
-#include <vector>
+
 
 namespace udp
 {

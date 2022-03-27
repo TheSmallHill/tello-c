@@ -7,6 +7,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <functional>
 
 const char* TellocInstanceInternal::OK_RESPONSE_STRING_ = "OK";
 const char* TellocInstanceInternal::ERROR_RESPONSE_STRING_ = "ERROR";
@@ -23,7 +24,7 @@ TellocInstanceInternal::TellocInstanceInternal(const TellocConfigInternal& confi
 	// Start the thread that monitors state
 	if (udpStateServerPtr_)
 	{
-
+		stateUpdateThreadPtr_ = std::unique_ptr<std::thread>(new std::thread(std::bind(&TellocInstanceInternal::StateHandlerFcn, this)));
 	}
 }
 
