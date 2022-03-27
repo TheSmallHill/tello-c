@@ -9,6 +9,7 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <vector>
 
 namespace udp
 {
@@ -49,6 +50,8 @@ protected:
 
 	void UpdateState(const TelloStateType& newState);
 
+	void SeparateStringByDelimiter(const std::string& str, const std::string& del, std::vector<std::string>& separated) const;
+
 	const TellocConfigInternal config_;
 
 	std::unique_ptr<udp::Client> udpCommandClientPtr_;
@@ -61,10 +64,11 @@ protected:
 	std::unique_ptr<std::thread> stateUpdateThreadPtr_;
 
 	TelloStateType currentState_;
-	mutable std::mutex stateUpdateMtx_;
+	mutable std::mutex stateMtx_;
 
 	static const char* OK_RESPONSE_STRING_;
 	static const char* ERROR_RESPONSE_STRING_;
+	static const float DEG_TO_RAD_;
 };
 
 #endif

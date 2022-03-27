@@ -25,30 +25,30 @@ typedef struct TelloState
 {
 	int missionPad;
 
-	float x_cm;
-	float y_cm;
-	float z_cm;
+	int x_cm;
+	int y_cm;
+	int z_cm;
 
 	float pitch_rad;
 	float roll_rad;
 	float yaw_rad;
 
-	float vgx_cmps;
-	float vgy_cmps;
-	float vgz_cmps;
+	int vgx_cmps;
+	int vgy_cmps;
+	int vgz_cmps;
 
-	float templ_c;
-	float temph_c;
+	int templ_c;
+	int temph_c;
 
-	float timeOfFlightDistance_cm;
+	unsigned int timeOfFlightDistance_cm;
 
-	float height_cm;
+	unsigned int height_cm;
 
-	float batteryPercent;
+	unsigned int batteryPercent;
 
 	float baro_cm;
 
-	float motorTime_sec;
+	unsigned int motorTime_sec;
 
 	float agx_cmps2;
 	float agy_cmps2;
