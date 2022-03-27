@@ -16,10 +16,7 @@ TellocInstancePtr CreateTellocInstance(const TellocConfigPtr configPtr);
 
 void DestroyTellocInstance(TellocInstancePtr* tellocInstancePtr);
 
-void FreeTellocResponse(TellocResponsePtr responsePtr);
-
-/// Generic send command function just for compatibility. In most use cases, its recommended to use the other functions provided.
-TellocResponsePtr TellocCommand(TellocInstancePtr tellocInstancePtr, const char* cmd);
+void FreeTellocResponse(TellocResponseTypePtr responsePtr);
 
 #ifdef __cplusplus
 }

@@ -6,23 +6,37 @@
 #include "udp/server.h"
 
 #include <cstring>
+#include <iostream>
+#include <functional>
 
-const char* OK_RESPONSE_STRING_ = "OK";
-const char* ERROR_RESPONSE_STRING_ = "ERROR";
+const char* TellocInstanceInternal::OK_RESPONSE_STRING_ = "OK";
+const char* TellocInstanceInternal::ERROR_RESPONSE_STRING_ = "ERROR";
+const float TellocInstanceInternal::DEG_TO_RAD_ = 0.01745;
 
 TellocInstanceInternal::TellocInstanceInternal(const TellocConfigInternal& config)
 	: config_(config)
 	, udpCommandClientPtr_(new udp::Client(config.ip_, config.commandPort_))
 	, udpCommandResponseServerPtr_(new udp::Server(config.ip_, config.commandPort_))
 	, udpStateServerPtr_(new udp::Server(config.ip_, config.statePort_))
-
+	, stopStateListener_(false)
+	, stateUpdateThreadPtr_(nullptr)
 {
-	// Intentionally empty
+	// Start the thread that monitors state
+	if (udpStateServerPtr_)
+	{
+		stateUpdateThreadPtr_ = std::unique_ptr<std::thread>(new std::thread(std::bind(&TellocInstanceInternal::StateHandlerFcn, this)));
+	}
 }
 
 TellocInstanceInternal::~TellocInstanceInternal()
 {
-	// Intentionally empty, everything using shared memory making for easy cleanup.
+	stopStateListener_.store(true);
+}
+
+TelloStateType TellocInstanceInternal::GetCurrentState() const
+{
+	std::lock_guard<std::mutex> lg(stateMtx_);
+	return currentState_;
 }
 
 TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
@@ -47,17 +61,19 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 			// Actually got a response so handle it
 			if (responseMsg.find(OK_RESPONSE_STRING_) != std::string::npos)
 			{
-				const std::list<std::string> iterableResponse = SeparateStatusFromResponse(responseMsg);
-				if (iterableResponse.size() == 1)
+				std::vector<std::string> response;
+				SeparateStringByDelimiter(responseMsg, " ", response);
+
+				if (response.size() == 1)
 				{
 					// Only one element means its just an ack
 					replyPtr->type = static_cast<int>(ResponseType::OK);
 				}
-				else if (iterableResponse.size() == 2)
+				else if (response.size() == 2)
 				{
 					// 2 elements means its an ack and a value (like from the basic get commands)
 					replyPtr->type = static_cast<int>(ResponseType::OK_FLOAT_VALUE);
-					replyPtr->fval = std::stof(iterableResponse.back());
+					replyPtr->fval = std::stof(response.back());
 				}
 				else
 				{
@@ -72,8 +88,10 @@ TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
 			}
 			else if (responseMsg.find(ERROR_RESPONSE_STRING_) != std::string::npos)
 			{
-				const std::list<std::string> iterableResponse = SeparateStatusFromResponse(responseMsg);
-				if (iterableResponse.size() == 1)
+				std::vector<std::string> response;
+				SeparateStringByDelimiter(responseMsg, " ", response);
+
+				if (response.size() == 1)
 				{
 					replyPtr->type = static_cast<int>(ResponseType::TELLO_ERROR);
 				}
@@ -224,22 +242,135 @@ char* TellocInstanceInternal::CreateSocketErrorMessage()
 	return errorMessage;
 }
 
-std::list<std::string> TellocInstanceInternal::SeparateStatusFromResponse(const std::string& msg) const
+void TellocInstanceInternal::StateHandlerFcn()
 {
-	std::list<std::string> separatedReturnStrings;
-
-	char* msgCpyOriginal = new char[msg.length()];
-	char* mspCpyMvg = std::strcpy(msgCpyOriginal, msg.c_str());
-
-	char* token = std::strtok(mspCpyMvg, " ");
-	while(token != NULL)
+	while (!stopStateListener_.load())
 	{
-		separatedReturnStrings.push_back(std::string(token, strlen(token)));
-		token = std::strtok(NULL, " ");
+		// Get mutex lock
+		udpStateServerMtx_.lock();
+
+		std::string msg;
+		if (!udpStateServerPtr_->ReceiveNonBlocking(config_.stateTimeout_ms_, msg))
+		{
+			// Something bad is going on with the state, shut down the thread and throw an exception
+			stopStateListener_.store(true);
+			/// @todo throw an exception
+		}
+
+		TelloStateType newState = GetState(msg);
+		UpdateState(newState);
+	}
+}
+
+TelloStateType TellocInstanceInternal::GetState(const std::string& msg) const
+{
+	TelloStateType newState;
+
+	std::vector<std::string> separatedState;
+
+	SeparateStringByDelimiter(msg, ";", separatedState);
+
+	for (std::size_t i = 0; i < separatedState.size(); i++)
+	{
+		const std::string& str = separatedState[i];
+		std::vector<std::string> keyValue;
+
+		SeparateStringByDelimiter(str, ":", keyValue);
+
+		const std::string& key = keyValue.front();
+		const std::string& value = keyValue.back();
+
+		if (key.compare("pitch"))
+		{
+			newState.pitch_rad = std::stof(value) * DEG_TO_RAD_;
+		}
+		else if (key.compare("roll"))
+		{
+			newState.roll_rad = std::stof(value) * DEG_TO_RAD_;
+		}
+		else if (key.compare("yaw"))
+		{
+			newState.yaw_rad = std::stof(value) * DEG_TO_RAD_;
+		}
+		else if (key.compare("vgx"))
+		{
+			newState.vgx_cmps = std::stoi(value);
+		}
+		else if (key.compare("vgy"))
+		{
+			newState.vgy_cmps = std::stoi(value);
+		}
+		else if (key.compare("vgz"))
+		{
+			newState.vgz_cmps = std::stoi(value);
+		}
+		else if (key.compare("templ"))
+		{
+			newState.templ_c = std::stoi(value);
+		}
+		else if (key.compare("temph"))
+		{
+			newState.temph_c = std::stoi(value);
+		}
+		else if (key.compare("tof"))
+		{
+			newState.timeOfFlightDistance_cm = static_cast<unsigned int>(std::stoi(value));
+		}
+		else if (key.compare("h"))
+		{
+			newState.height_cm = static_cast<unsigned int>(std::stoi(value));
+		}
+		else if (key.compare("bat"))
+		{
+			newState.batteryPercent = static_cast<unsigned int>(std::stoi(value));
+		}
+		else if (key.compare("baro"))
+		{
+			newState.baro_cm = std::stof(value);
+		}
+		else if (key.compare("time"))
+		{
+			newState.motorTime_sec = static_cast<unsigned int>(std::stoi(value));
+		}
+		else if (key.compare("agx"))
+		{
+			newState.agx_cmps2 = std::stof(value);
+		}
+		else if (key.compare("agy"))
+		{
+			newState.agy_cmps2 = std::stof(value);
+		}
+		else if (key.compare("agz"))
+		{
+			newState.agz_cmps2 = std::stof(value);
+		}
+		else
+		{
+			std::cerr << "Unrecognized parameter in Tello state!" << std::endl;
+		}
 	}
 
-	delete msgCpyOriginal;
-	msgCpyOriginal = nullptr;
+	return newState;
+}
 
-	return separatedReturnStrings;
+void TellocInstanceInternal::UpdateState(const TelloStateType& newState)
+{
+	std::lock_guard<std::mutex> lg(stateMtx_);
+
+	currentState_ = newState;
+}
+
+void TellocInstanceInternal::SeparateStringByDelimiter(const std::string& str, const std::string& del, std::vector<std::string>& separated) const
+{
+	std::string strCpy(str);
+
+	// Get a more separated representation of the state message since it was delimited
+	std::size_t pos = 0;
+	std::string token;
+	while ((pos = strCpy.find(del)) != std::string::npos)
+	{
+		token = strCpy.substr(0, pos);
+		separated.push_back(token);
+		strCpy.erase(0, pos + del.size());
+	}
 }
