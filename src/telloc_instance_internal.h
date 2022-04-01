@@ -147,6 +147,7 @@ protected:
 	/// @name Unit Constants
 	/// @{
 	static const float DEG_TO_RAD_;
+	static const float RAD_TO_DEG_;
 	/// @}
 };
 

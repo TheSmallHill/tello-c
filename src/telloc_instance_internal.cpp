@@ -12,6 +12,7 @@
 const char* TellocInstanceInternal::OK_RESPONSE_STRING_ = "OK";
 const char* TellocInstanceInternal::ERROR_RESPONSE_STRING_ = "ERROR";
 const float TellocInstanceInternal::DEG_TO_RAD_ = 0.01745;
+const float TellocInstanceInternal::RAD_TO_DEG_ = 1 / TellocInstanceInternal::DEG_TO_RAD_;
 
 TellocInstanceInternal::TellocInstanceInternal(const TellocConfigInternal& config)
 	: config_(config)
@@ -121,57 +122,57 @@ TellocResponse* TellocInstanceInternal::CommandLand()
 
 TellocResponse* TellocInstanceInternal::CommandEnableVideoStream()
 {
-
+	return ExecuteCommand("streamon");
 }
 
 TellocResponse* TellocInstanceInternal::CommandDisableVideoStream()
 {
-
+	return ExecuteCommand("streamoff");
 }
 
 TellocResponse* TellocInstanceInternal::CommandEmergency()
 {
-
+	return ExecuteCommand("emergency");
 }
 
 TellocResponse* TellocInstanceInternal::CommandUp(const unsigned int up_cm)
 {
-
+	return ExecuteCommand("up " + std::to_string(up_cm));
 }
 
 TellocResponse* TellocInstanceInternal::CommandDown(const unsigned int down_cm)
 {
-
+	return ExecuteCommand("down " + std::to_string(down_cm));
 }
 
 TellocResponse* TellocInstanceInternal::CommandLeft(const unsigned int left_cm)
 {
-
+	return ExecuteCommand("left " + std::to_string(left_cm));
 }
 
 TellocResponse* TellocInstanceInternal::CommandRight(const unsigned int right_cm)
 {
-
+	return ExecuteCommand("right " + std::to_string(right_cm));
 }
 
 TellocResponse* TellocInstanceInternal::CommandForward(const unsigned int forward_cm)
 {
-
+	return ExecuteCommand("forward " + std::to_string(forward_cm));
 }
 
 TellocResponse* TellocInstanceInternal::CommandBackward(const unsigned int backward_cm)
 {
-
+	return ExecuteCommand("back " + std::to_string(backward_cm));
 }
 
 TellocResponse* TellocInstanceInternal::CommandRotateCW(const unsigned int cw_rad)
 {
-
+	return ExecuteCommand("cw " + std::to_string(cw_rad * RAD_TO_DEG_));
 }
 
 TellocResponse* TellocInstanceInternal::CommandRotateCCW(const unsigned int ccw_rad)
 {
-
+	return ExecuteCommand("ccw " + std::to_string(ccw_rad * RAD_TO_DEG_));
 }
 
 TellocResponse* TellocInstanceInternal::ExecuteCommand(const std::string& cmd)
