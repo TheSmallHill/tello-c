@@ -38,6 +38,37 @@ struct TellocInstanceInternal
 	/// @return Structure containing state data for the Tello.
 	TelloStateType GetCurrentState() const;
 
+	bool GetVideoStreamStatus() const;
+
+	/// @name Core Movement Commands
+	/// @{
+	TellocResponse* CommandTakeoff();
+
+	TellocResponse* CommandLand();
+
+	TellocResponse* CommandEnableVideoStream();
+
+	TellocResponse* CommandDisableVideoStream();
+
+	TellocResponse* CommandEmergency();
+
+	TellocResponse* CommandUp(const unsigned int up_cm);
+
+	TellocResponse* CommandDown(const unsigned int down_cm);
+
+	TellocResponse* CommandLeft(const unsigned int left_cm);
+
+	TellocResponse* CommandRight(const unsigned int right_cm);
+
+	TellocResponse* CommandForward(const unsigned int forward_cm);
+
+	TellocResponse* CommandBackward(const unsigned int backward_cm);
+
+	TellocResponse* CommandRotateCW(const unsigned int cw_rad);
+
+	TellocResponse* CommandRotateCCW(const unsigned int ccw_rad);
+	/// @}
+
 protected:
 	/// Enumeration used to denote the type of the response we received from Tello.
 	enum class ResponseType
@@ -105,6 +136,8 @@ protected:
 
 	TelloStateType currentState_; ///< The current state of the Tello.
 
+	bool isVideoStreamEnabled_;
+
 	/// @name Response Constants
 	/// @{
 	static const char* OK_RESPONSE_STRING_;
@@ -114,6 +147,7 @@ protected:
 	/// @name Unit Constants
 	/// @{
 	static const float DEG_TO_RAD_;
+	static const float RAD_TO_DEG_;
 	/// @}
 };
 
